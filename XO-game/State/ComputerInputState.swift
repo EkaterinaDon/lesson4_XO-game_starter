@@ -1,5 +1,5 @@
 //
-//  PlayerInputState.swift
+//  ComputerInputState.swift
 //  XO-game
 //
 //  Created by Ekaterina on 25.12.20.
@@ -8,8 +8,8 @@
 
 import Foundation
 
-public class PlayerInputState: GameState {
-   
+public class ComputerInputState: GameState {
+    
     public private(set) var isCompleted = false
     
     public let player: Player
@@ -26,7 +26,9 @@ public class PlayerInputState: GameState {
         self.gameboardView = gameboardView
     }
     
-    public func begin() {
+    public func begin(){}
+    
+    public func beginWithComp() {
         switch self.player {
         case .first:
             self.gameViewController?.firstPlayerTurnLabel.isHidden = false
@@ -34,32 +36,22 @@ public class PlayerInputState: GameState {
         case .second:
             self.gameViewController?.firstPlayerTurnLabel.isHidden = true
             self.gameViewController?.secondPlayerTurnLabel.isHidden = false
+            self.gameViewController?.secondPlayerTurnLabel.text = "Computer"
         }
         self.gameViewController?.winnerLabel.isHidden = true
     }
     
-    public func beginWithComp() {}
-    
     public func addMark(at position: GameboardPosition) {
         Log(.playerInput(player: self.player, position: position))
-        guard let gameboardView = self.gameboardView, gameboardView.canPlaceMarkView(at: position), let gameViewController = self.gameViewController
+        guard let gameboardView = self.gameboardView, gameboardView.canPlaceMarkView(at: position)
             else { return }
         
-        if gameViewController.selectPlayer == .human {
-            debugPrint("human")
-            self.gameboard?.setPlayer(self.player, at: position)
-            self.gameboardView?.placeMarkView(self.markViewPrototype.copy(), at: position)
-            self.isCompleted = true
-        } else {
-            self.gameboard?.setPlayer(self.player, at: position)
-            self.gameboardView?.placeMarkView(self.markViewPrototype.copy(), at: position)
-            self.isCompleted = true
-            debugPrint("comp")
-        }
+        debugPrint("computer playing")
         
-    
-//        self.gameboard?.setPlayer(self.player, at: position)
-//        self.gameboardView?.placeMarkView(self.markViewPrototype.copy(), at: position)
-//        self.isCompleted = true
+        self.gameboard?.setPlayerRandom(self.player, at: position)
+        self.gameboardView?.placeMarkView(self.markViewPrototype.copy(), at: position)
+        self.isCompleted = true
     }
 }
+
+

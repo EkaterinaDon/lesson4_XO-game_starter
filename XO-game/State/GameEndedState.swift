@@ -10,6 +10,8 @@ import Foundation
 
 public class GameEndedState: GameState {
     
+    public var selectPlayer: SelectPlayer = .human
+        
     public let isCompleted = false
     
     public let winner: Player?
@@ -32,6 +34,8 @@ public class GameEndedState: GameState {
         self.gameViewController?.firstPlayerTurnLabel.isHidden = true
         self.gameViewController?.secondPlayerTurnLabel.isHidden = true
     }
+    
+    public func beginWithComp() {}
     
     public func addMark(at position: GameboardPosition) { }
     

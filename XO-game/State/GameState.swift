@@ -14,5 +14,7 @@ public protocol GameState {
     
     func begin()
     
+    func beginWithComp()
+    
     func addMark(at position: GameboardPosition)
 }

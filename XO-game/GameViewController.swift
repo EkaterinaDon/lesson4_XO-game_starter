@@ -15,29 +15,48 @@ class GameViewController: UIViewController {
     @IBOutlet var secondPlayerTurnLabel: UILabel!
     @IBOutlet var winnerLabel: UILabel!
     @IBOutlet var restartButton: UIButton!
+    @IBOutlet weak var playerControl: UISegmentedControl!
     
     private var counter: Int = 0
     private let gameboard = Gameboard()
-    private var currentState: GameState! {
-        didSet {
-            self.currentState.begin()
+    
+    var selectPlayer: SelectPlayer {
+        switch self.playerControl.selectedSegmentIndex {
+        case 0:
+            return .human
+        case 1:
+            return .computer
+        default:
+            return .human
         }
     }
+    
+    private var currentState: GameState! {
+        didSet {            
+            if selectPlayer == .computer {
+                self.currentState.beginWithComp()
+            } else {
+                self.currentState.begin()
+            }
+        }
+    }
+    
     private lazy var referee = Referee(gameboard: self.gameboard)
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        goToFirstState()
-        
-        gameboardView.onSelectPosition = { [weak self] position in
-            guard let self = self else { return }
-            self.currentState.addMark(at: position)
-            self.counter += 1
-            if self.currentState.isCompleted {
-                self.goToNextState()
+            goToFirstState()
+                        
+            gameboardView.onSelectPosition = { [weak self] position in
+                guard let self = self else { return }
+                self.currentState.addMark(at: position)
+                self.counter += 1
+                if self.currentState.isCompleted {
+                    self.goToNextState()
+                }
             }
-        }
+
     }
     
     @IBAction func restartButtonTapped(_ sender: UIButton) {
@@ -64,9 +83,15 @@ class GameViewController: UIViewController {
             self.currentState = GameEndedState(winner: nil, gameViewController: self)
         }
         
-        if let playerInputState = currentState as? PlayerInputState {
+        if let playerInputState = currentState as? PlayerInputState { 
             let player = playerInputState.player.next
             self.currentState = PlayerInputState(player: player, markViewPrototype: player.markViewPrototype, gameViewController: self, gameboard: gameboard, gameboardView: gameboardView)
+        }
+        
+        if selectPlayer == .computer {
+            guard let computerInputState = currentState as? ComputerInputState else { return }
+            let player = computerInputState.player.next
+            self.currentState = ComputerInputState(player: player, markViewPrototype: player.markViewPrototype, gameViewController: self, gameboard: gameboard, gameboardView: gameboardView)
         }
     }
 

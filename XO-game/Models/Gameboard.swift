@@ -20,6 +20,13 @@ public final class Gameboard {
         positions[position.column][position.row] = player
     }
     
+    public func setPlayerRandom(_ player: Player, at position: GameboardPosition) {
+        let randomColumn = Int(arc4random_uniform(UInt32(position.column)))
+        let randomRow = Int(arc4random_uniform(UInt32(position.row)))
+        positions[randomColumn][randomRow] = player
+    }
+    
+    
     public func clear() {
         self.positions = initialPositions()
     }
